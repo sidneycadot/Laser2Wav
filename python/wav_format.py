@@ -1,27 +1,28 @@
 # wav_format.py
 #
-# Copyright (c) 2005 by Sidney Cadot <sidney@jigsaw.nl>
+# Copyright (c) 2005--2015 by Sidney Cadot <sidney@jigsaw.nl>
 # This software is licensed under the GNU General Public License (GPL).
 #
 # This file is part of laser2wav, a software-only implementation of
 # an audio CD decoder.
-#
-###############################################################################
+
 
 def little_endian_long(n):
-    return [(n)&255, (n>>8)&255, (n>>16)&255, (n>>24)&255]
+    return [(n) & 255, (n>>8) & 255, (n>>16) & 255, (n>>24) & 255]
 
 def little_endian_short(n):
-    return [(n)&255, (n>>8)&255]
+    return [(n) & 255, (n>>8) & 255]
 
 def clip(n):
-    if (n<-32768): n = -32768
-    if (n>32767): n = 32767
+    if n < -32768:
+        n = -32768
+    if n>32767:
+        n = 32767
     return n
 
 def to_unsigned(n):
-    if (n<0):
-        n = n + 65536
+    if n < 0:
+        n += 65536
     return n
 
 def wave_file_string(audio_samples):
