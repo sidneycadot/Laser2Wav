@@ -15,3 +15,7 @@ This file documents the history of the laser2wav package.
 * emit a PCM-encoded WAV file instead of a text file
 * laser input is now assumed to be the raw signal
   (not the delta-signal as before).
+
+--- 23 May 2015:
+
+* transferring the repository and its data to Github.
