@@ -1,5 +1,9 @@
 # How Compact Discs Work
 
+![Electron microscope image of CD surface](images/Afm_cd-rom.jpg)
+
+(Image courtesy of Wikimedia Commons user *freiermensch*)
+
 ### Oscilloscope images
 
 ![Oscilloscope Image of CD signal](images/oscilloscope-screenshot.png)
