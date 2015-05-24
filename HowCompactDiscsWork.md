@@ -25,20 +25,26 @@ to 5 kilometers (just over 3 miles) long.
 
 ![Electron microscope image of CD surface](images/Afm_cd-rom.jpg)
 
-This is reminiscent of the way data is stored on an old vinyl record. There
-are several key differences, though.
+This is reminiscent of the way data is stored on an old gramophone record.
+There are several key differences, though.
 
-First, vinyl records are played back using a 'constant angular velocity' of
-33, 45, or (for very old records) 78 rotations-per-minute. This means that
-the quality of the playback is best when the needle is on the outside of the
-record. CD's, on the other hand, are played back at a 'constant radial
-velocity' of about 1.4 meters-per-second. This means that a Compact Disc has
-to rotate much faster when reading the information close to its center.
+First, gramophone records are played back using a *constant angular velocity*
+of 33, 45, or (for very old records) 78 revolutions per minute. As a
+consequence, the quality of the playback is best when the needle is on the
+outside of the record, where the needle travels faster along the groove.
+
+CDs, on the other hand, are played back at a *constant linear velocity* of
+about 1.4 meters per second. This means that a Compact Disc has to rotate
+much faster when reading the information close to its center. Thanks to this,
+the information density of as CD is the same everywhere along its track.
 
 Second, CDs are read from the inside to the outside, rather than from the
-outside to the inside. This makes it possible to accomodate different sizes
+outside to the inside. This makes it possible to handle different sizes
 of CDs (e.g., regular CDs with a diameter of 120 mm CDs versus smaller CDs),
-without changes to the mechanics.
+without changes to the mechanics; regardless of the size, the position
+where playback begins is always the same. This is an improvement over
+gramophone records, since there the starting position of the pick-up
+element depended on the size of the record being played.
 
 Third, and by far most important, is that the actual data on a CD is
 *digital* rather than *analog*. This means that the actual information
@@ -48,17 +54,17 @@ In case of the CD, two distinguishable states are used: the 'lands' and
 'pits' that the laser encounters while following a track. The precise height
 of the lands and the pits isn't used to carry information; it's just the
 fact that there is (or isn't) a pit at a certain place that matters, not how
-deep it is. In contrast, in a vinyl record the sides of the track followed
-by the needle are 'wavey', and the audio information is contained in the
-precise shape of the track waves.
+deep it is. In contrast, in a gramophone record the sides of the track
+followed by the needle are 'wavy', and the audio information is contained in
+the precise shape of these wavy sides.
 
-The Compact Disc is quite a feat of engineering, considering that it was
-developed in the late 70s and early 80s. At the physical level, a CD player
-has to be able to follow a microscopic track of lands and pits that passes
-under its laser. This is a challenging control problem; if a CD fails it
-is most often due to the inability of the CD player to follow the track
-properly, with the consequence that the CD 'skips', and needs to restart a
-search for the track.
+The Compact Disc is quite a feat of engineering, especially considering that
+it was developed in the late 70s and early 80s. At the physical level, a CD
+player has to be able to follow a microscopic track of lands and pits that
+passes under its laser. This is a challenging control problem; if readind a
+CD fails it is most often due to the inability of the CD player to follow the
+track properly, with the consequence that the CD 'skips', and needs to restart
+a search for the track.
 
 Furthermore, it is necessary that the laser readout electronics can reliably
 distinguish between lands and pits. This is actually the part that requires
@@ -76,26 +82,47 @@ section discusses what the laser readout electronic 'sees' at that point.
 The laser signal while playing the CD
 -------------------------------------
 
+explain oscilloscope
+
+(prefer to have an analog-signal eye pattern image here)
+
+explain eye pattern
+
+analog electronics used to turn the signal in a real digital signal with
+sharp edges.
+
 ![Oscilloscope Image of CD signal](images/oscilloscope-screenshot.png)
 
-Oscilloscope
-Eye pattern
+Explain T = 1/4321800 second 'base time'.
 
-Raw captured data
------------------
+Pits and last for 3*T .. 11*T.
+
+Raw digital data
+----------------
+
+Turning an RF signal into reliable 0s and 1s is possible, but not trivial.
 
 ![Raw signal](images/raw-signal.png)
 
-Note that we do not now if the 0's correspond to 'lands' and the 1's to 'pits', or vice versa.
-However, the first step of the signal processing is to alter the signal to look at places where the signal changes from
-land-to-pit, or from pit-to-land, so this really doesn't make a difference.
+Note that we do not now for sure if the 0's correspond to 'lands' and
+the 1's to 'pits', or vice versa.
 
-Delta signal: only changes matter
+The first step of the digital signal processing, as described below, is to
+alter the signal to look at places where the signal changes from land-to-pit,
+or from pit-to-land, so this really doesn't make a difference.
+
+A Compact Disc with all lands turned into pits, and all pits turned in lands,
+would play equally well.
+
+Delta signal: only change matters
 ---------------------------------
 
 ![Delta signal](images/delta-signal.png)
 
-An Compact Disc with all lands in pits, and pits in lands, would play too.
+Sync pattern becomes very very clear here.
+
+The CD player knows where to sample by looking at when transitions tend to
+happen ("clock recovery").
 
 Frame structure
 ---------------
@@ -124,12 +151,15 @@ Subchannel information
 
 Only P and Q are normally used, the others are zeroes.
 
-
 The alignment problem.
 
+Audio data and audio data error correction
+------------------------------------------
 
-Audio and audio data error correction
--------------------------------------
+
 
 References
 ----------
+
+Red Book
+ECMA-130
