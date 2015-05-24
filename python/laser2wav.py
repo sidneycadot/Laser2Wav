@@ -9,8 +9,7 @@
 # an audio CD decoder.
 
 
-import sys
-import wav_format
+import sys, wave
 import galois_field as gf
 
 from efm import EFM
@@ -237,8 +236,25 @@ def main():
     audio_data = extract_audio_stream(data_stream)
 
     print "Writing WAV file ..."
-    with open(filename_out, "wb") as f:
-        f.write(wav_format.wave_file_string(audio_data))
+
+    # Python's WAV-file writer expects raw data, encoded as a string.
+
+    wave_data = []
+    for (left, right) in audio_data:
+        if left  < 0: left  += 65536
+        if right < 0: right += 65536
+        wave_data.append(chr(left % 256) + chr(left // 256) + chr(right % 256) + chr(right // 256))
+
+    wave_data = "".join(wave_data)
+
+    # Write the WAV file.
+
+    wf = wave.open(filename_out, "w")
+    wf.setnchannels(2) # stereo
+    wf.setsampwidth(2) # 16-bit signal; 2 bytes per sample
+    wf.setframerate(44100)
+    wf.writeframes(wave_data)
+    wf.close()
 
 if __name__ == "__main__":
     main()
