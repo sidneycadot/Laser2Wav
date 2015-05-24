@@ -32,20 +32,21 @@ First, vinyl records are played back using a 'constant angular velocity' of
 33, 45, or (for very old records) 78 rotations-per-minute. This means that
 the quality of the playback is best when the needle is on the outside of the
 record. CD's, on the other hand, are played back at a 'constant radial
-velocity' of about 1.4 meters-per-second. This means that a CD has to rotate
-much faster when reading the inner portions of the CDs.
+velocity' of about 1.4 meters-per-second. This means that a Compact Disc has
+to rotate much faster when reading the information close to its center.
 
 Second, CDs are read from the inside to the outside, rather than from the
 outside to the inside. This makes it possible to accomodate different sizes
-of CDs (regular CDs versus single-CDs), without changes to the mechanics.
+of CDs (e.g., regular CDs with a diameter of 120 mm CDs versus smaller CDs),
+without changes to the mechanics.
 
-Third, and by far most important, is that the data on a CD is *digital*
-rather than *analog*. This means that the actual information is represented
-using a small set of readily distinguishable states.
+Third, and by far most important, is that the actual data on a CD is
+*digital* rather than *analog*. This means that the actual information
+is represented using a small set of readily distinguishable states.
 
 In case of the CD, two distinguishable states are used: the 'lands' and
 'pits' that the laser encounters while following a track. The precise height
-of the 'lands' and the 'pits' isn't used to carry information; it's just the
+of the lands and the pits isn't used to carry information; it's just the
 fact that there is (or isn't) a pit at a certain place that matters, not how
 deep it is. In contrast, in a vinyl record the sides of the track followed
 by the needle are 'wavey', and the audio information is contained in the
@@ -54,22 +55,22 @@ precise shape of the track waves.
 The Compact Disc is quite a feat of engineering, considering that it was
 developed in the late 70s and early 80s. At the physical level, a CD player
 has to be able to follow a microscopic track of lands and pits that passes
-under its laser. In many ways this is the hardest part; if a CD fails it
+under its laser. This is a challenging control problem; if a CD fails it
 is most often due to the inability of the CD player to follow the track
 properly, with the consequence that the CD 'skips', and needs to restart a
 search for the track.
 
-Second, it is necessary that the laser readout electronics can reliably
+Furthermore, it is necessary that the laser readout electronics can reliably
 distinguish between lands and pits. This is actually the part that requires
-a 'laser' rather than a regular light source; the height difference between
-the 'lands' and 'pits' is chosen to make sure that the reflected laser signal
-exhibits either 'constructive' or 'destructive' interference, which can be
+a laser rather than a regular light source; the height difference between
+the lands and pits is chosen to make sure that the reflected laser signal
+exhibits either constructive or destructive interference, which can be
 detected by an optical sensor. For this to work, it is necessary to precisely
-focus the laser onto the surface of the CD, which is a second challenging
+focus the laser onto the surface of the CD, which is another challenging
 control problem.
 
 But let's assume for the moment that these challenges are met, and that the
-CD player is able to track the spiral of lands of pits perfectly. The next
+CD player is able to track the spiral of lands and pits perfectly. The next
 section discusses what the laser readout electronic 'sees' at that point.
 
 The laser signal while playing the CD
