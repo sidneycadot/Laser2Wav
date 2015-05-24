@@ -1,17 +1,16 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 # laser2wav.py
 #
 # Copyright (c) 2005--2015 by Sidney Cadot <sidney@jigsaw.nl>
 # This software is licensed under the GNU General Public License (GPL).
 #
-# This file is part of laser2wav, a software-only implementation of
+# This file is part of Laser2Wav, a software-only implementation of
 # an audio CD decoder.
 
 
 import sys, wave
 import galois_field as gf
-
 from efm import EFM
 
 def analyze_frame(frame):
@@ -30,7 +29,7 @@ def analyze_frame(frame):
     return (framedata[0], framedata[1:])
 
 def invert_last_16(Q):
-    return Q[:-16] + str.join("", map(lambda x: str(1-int(x)), Q[-16:]))
+    return Q[:-16] + str.join("", [str(1 - int(x)) for x in Q[-16:]])
 
 def valid_crc(Q):
     # this is a simple way to check the CRC
@@ -42,17 +41,22 @@ def valid_crc(Q):
         return False
 
     # subtract multiple of the CRC generator polynomial
-    Q = map(int, Q)
-    Q[ 0] = 1-Q[ 0]
-    Q[ 4] = 1-Q[ 4]
-    Q[11] = 1-Q[11]
-    Q[16] = 1-Q[16]
-    Q = str.join("", map(str, Q))
+    Q = [int(x) for x in Q]
+    Q[ 0] = 1 - Q[ 0]
+    Q[ 4] = 1 - Q[ 4]
+    Q[11] = 1 - Q[11]
+    Q[16] = 1 - Q[16]
+    Q = str.join("", [str(x) for x in Q])
     return valid_crc(Q)
 
 def to_signed(n):
     if n >= 32768:
         n -= 65536
+    return n
+
+def to_unsigned(n):
+    if n < 0:
+        n += 65536
     return n
 
 def bcd2int(S):
@@ -65,7 +69,7 @@ def bcd2int(S):
 
 def analyze_control_stream(control_stream):
 
-    print "Analyzing control stream ..."
+    print("Analyzing control stream ...")
 
     all_zeros = 96 * "0"
     all_ones  = 96 * "1"
@@ -82,14 +86,14 @@ def analyze_control_stream(control_stream):
             control_sector = control_stream[2:98]
             control_stream = control_stream[98:]
 
-            P = str.join("", map(lambda x: str(int((x & 0x80) != 0)), control_sector))
-            Q = str.join("", map(lambda x: str(int((x & 0x40) != 0)), control_sector))
-            R = str.join("", map(lambda x: str(int((x & 0x20) != 0)), control_sector))
-            S = str.join("", map(lambda x: str(int((x & 0x10) != 0)), control_sector))
-            T = str.join("", map(lambda x: str(int((x & 0x08) != 0)), control_sector))
-            U = str.join("", map(lambda x: str(int((x & 0x04) != 0)), control_sector))
-            V = str.join("", map(lambda x: str(int((x & 0x02) != 0)), control_sector))
-            W = str.join("", map(lambda x: str(int((x & 0x01) != 0)), control_sector))
+            P = str.join("", [str(int((x & 0x80) != 0)) for x in control_sector])
+            Q = str.join("", [str(int((x & 0x40) != 0)) for x in control_sector])
+            R = str.join("", [str(int((x & 0x20) != 0)) for x in control_sector])
+            S = str.join("", [str(int((x & 0x10) != 0)) for x in control_sector])
+            T = str.join("", [str(int((x & 0x08) != 0)) for x in control_sector])
+            U = str.join("", [str(int((x & 0x04) != 0)) for x in control_sector])
+            V = str.join("", [str(int((x & 0x02) != 0)) for x in control_sector])
+            W = str.join("", [str(int((x & 0x01) != 0)) for x in control_sector])
 
             p_ok = (P in [all_zeros, all_ones])
             q_ok = valid_crc(invert_last_16(Q))
@@ -100,9 +104,9 @@ def analyze_control_stream(control_stream):
             v_ok = (V == all_zeros) # for most CDs
             w_ok = (W == all_zeros) # for most CDs
 
-            print "    Sector sub-channels:"
-            print "        P: <{}> {}".format(P, ok_map[p_ok])
-            print "        Q: <{}> {}".format(Q, ok_map[q_ok])
+            print("    Sector sub-channels:")
+            print("        P: <{}> {}".format(P, ok_map[p_ok]))
+            print("        Q: <{}> {}".format(Q, ok_map[q_ok]))
 
             if q_ok:
                 q_control = Q[0:4]
@@ -111,20 +115,20 @@ def analyze_control_stream(control_stream):
                 if q_mode == 1:
                     (tno,index,min,sec,frac,zero,amin,asec,afrac) = [bcd2int(q_data[8*i:8*i+8]) for i in range(9)]
                     assert zero == 0
-                    print "              CONTROL .......... : <{}> [#channels / reserved / copy-protect / pre-emphasis]".format(q_control)
-                    print "              MODE ............. : {}".format(q_mode)
-                    print "              DATA ............. : trackno. {:02d} indexno. {:02d} track-time {:02d}:{:02d}.{:02d} [mm:ss.ff] disc-time {:02d}:{:02d}.{:02d} [mm:ss.ff]".format(tno, index, min,  sec,  frac, amin, asec, afrac)
+                    print("              CONTROL .......... : <{}> [#channels / reserved / copy-protect / pre-emphasis]".format(q_control))
+                    print("              MODE ............. : {}".format(q_mode))
+                    print("              DATA ............. : trackno. {:02d} indexno. {:02d} track-time {:02d}:{:02d}.{:02d} [mm:ss.ff] disc-time {:02d}:{:02d}.{:02d} [mm:ss.ff]".format(tno, index, min,  sec,  frac, amin, asec, afrac))
                 else:
-                    print "              CONTROL .......... : <{}>".format(q_control)
-                    print "              MODE ............. : {}".format(q_mode)
-                    print "              DATA ............. : <{}>".format(q_data)
+                    print("              CONTROL .......... : <{}>".format(q_control))
+                    print("              MODE ............. : {}".format(q_mode))
+                    print("              DATA ............. : <{}>".format(q_data))
 
-            print "        R: <{}> {}".format(R, ok_map[r_ok])
-            print "        S: <{}> {}".format(S, ok_map[s_ok])
-            print "        T: <{}> {}".format(T, ok_map[t_ok])
-            print "        U: <{}> {}".format(U, ok_map[u_ok])
-            print "        V: <{}> {}".format(V, ok_map[v_ok])
-            print "        W: <{}> {}".format(W, ok_map[w_ok])
+            print("        R: <{}> {}".format(R, ok_map[r_ok]))
+            print("        S: <{}> {}".format(S, ok_map[s_ok]))
+            print("        T: <{}> {}".format(T, ok_map[t_ok]))
+            print("        U: <{}> {}".format(U, ok_map[u_ok]))
+            print("        V: <{}> {}".format(V, ok_map[v_ok]))
+            print("        W: <{}> {}".format(W, ok_map[w_ok]))
 
 def verify_data_stream(data):
 
@@ -136,7 +140,7 @@ def verify_data_stream(data):
     invert = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255]
 
     # check C1 a.k.a. P-parity
-    print "Checking C1 / P parity ..."
+    print("Checking C1 / P parity ...")
     p_delay = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
     for i in range(1, len(data)):
         z_list = []
@@ -146,11 +150,11 @@ def verify_data_stream(data):
                 z = gf.add(z, gf.multiply(gf.power(gf.alpha, hp_row*(31-j)), data[i-p_delay[j]][j]^invert[j]))
             z_list.append(z)    
         if z_list != [gf.zero, gf.zero, gf.zero, gf.zero]:
-            print "P PARITY: ERROR DETECTED IN FRAME # {}".format(i)
+            print("P PARITY: ERROR DETECTED IN FRAME # {}".format(i))
             errorsP = errorsP + 1
 
     # check C2 a.k.a. Q-parity
-    print "Checking C2 / Q parity ..."
+    print("Checking C2 / Q parity ...")
     q_delay = [107, 104, 99, 96, 91, 88, 83, 80, 75, 72, 67, 64, 59, 56, 51, 48, 43, 40, 35, 32, 27, 24, 19, 16, 11, 8, 3, 0]
     for i in range(107, len(data)):
         z_list = []
@@ -160,16 +164,13 @@ def verify_data_stream(data):
                 z  = gf.add(z, gf.multiply(gf.power(gf.alpha, hq_row*(27-j)), data[i-q_delay[j]][j]^invert[j]))
             z_list.append(z)
         if z_list!= [gf.zero, gf.zero, gf.zero, gf.zero]:
-            print "Q PARITY: ERROR DETECTED IN FRAME # {}".format(i)
+            print("Q PARITY: ERROR DETECTED IN FRAME # {}".format(i))
             errorsQ = errorsQ + 1
 
     return (errorsP, errorsQ)
 
 def extract_audio_stream(data):
 
-    # extract the audio data
-
-    print "Extracting audio data ..."
     audio_data = []
 
     for i in range(105, len(data)):
@@ -194,25 +195,47 @@ def extract_audio_stream(data):
 
     return audio_data
 
+def write_wav_file(filename_out, audio_data):
+
+    # Python's WAV-file writer expects raw data, encoded as a string.
+
+    wave_data = bytearray()
+    for (left, right) in audio_data:
+        left = to_unsigned(left)
+        right = to_unsigned(right)
+        wave_data.append(left % 256)
+        wave_data.append(left // 256)
+        wave_data.append(right % 256)
+        wave_data.append(right // 256)
+
+    # Write the WAV file.
+
+    wf = wave.open(filename_out, "w")
+    wf.setnchannels(2) # stereo
+    wf.setsampwidth(2) # 16-bit signal; 2 bytes per sample
+    wf.setframerate(44100)
+    wf.writeframes(wave_data)
+    wf.close()
+
 def main():
 
     if len(sys.argv) != 3:
-        print "Usage: python laser2wav.py <laser-in.dat> <waveform-out.wav>"
+        print("Usage: python laser2wav.py <laser-in.dat> <waveform-out.wav>")
         return
 
     filename_in  = sys.argv[1]
     filename_out = sys.argv[2]
 
-    print "Reading raw signal ..."
+    print("Reading raw signal ...")
     with open(filename_in, "rb") as f:
         raw_signal = f.read()
 
-    print "Converting to delta signal..."
-    raw_signal = map(int, raw_signal)
+    print("Converting to delta signal...")
+    raw_signal = [int (x) for x in raw_signal]
     delta_signal = [str(raw_signal[i] ^ raw_signal[i - 1]) for i in range(1, len(raw_signal))]
     delta_signal = str.join("", delta_signal)
 
-    print "Walking frames..."
+    print("Walking frames...")
     control_stream = []
     data_stream    = []
 
@@ -233,28 +256,11 @@ def main():
 
     verify_data_stream(data_stream)
 
+    print("Extracting audio data ...")
     audio_data = extract_audio_stream(data_stream)
 
-    print "Writing WAV file ..."
-
-    # Python's WAV-file writer expects raw data, encoded as a string.
-
-    wave_data = []
-    for (left, right) in audio_data:
-        if left  < 0: left  += 65536
-        if right < 0: right += 65536
-        wave_data.append(chr(left % 256) + chr(left // 256) + chr(right % 256) + chr(right // 256))
-
-    wave_data = "".join(wave_data)
-
-    # Write the WAV file.
-
-    wf = wave.open(filename_out, "w")
-    wf.setnchannels(2) # stereo
-    wf.setsampwidth(2) # 16-bit signal; 2 bytes per sample
-    wf.setframerate(44100)
-    wf.writeframes(wave_data)
-    wf.close()
+    print("Writing WAV file ...")
+    write_wav_file(filename_out, audio_data)
 
 if __name__ == "__main__":
     main()
