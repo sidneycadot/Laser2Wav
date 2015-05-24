@@ -82,20 +82,20 @@ section discusses what the laser readout electronic 'sees' at that point.
 The laser signal while playing the CD
 -------------------------------------
 
-explain oscilloscope
+Explain what an oscilloscope is.
 
-(prefer to have an analog-signal eye pattern image here)
+Insert an analog-signal eye pattern image here.
 
-explain eye pattern
+Explain the eye pattern.
 
-analog electronics used to turn the signal in a real digital signal with
-sharp edges.
+Analog electronics are used to turn the wavy signal in a real digital signal
+with sharp edges.
 
 ![Oscilloscope Image of CD signal](images/oscilloscope-screenshot.png)
 
-Explain T = 1/4321800 second 'base time'.
+Explain the T = 1/4321800 second 'base time'.
 
-Pits and last for 3*T .. 11*T.
+Pits and lands last for 3*T .. 11*T (nine different lengths).
 
 Raw digital data
 ----------------
